@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "nightman"
+
+Nightman::CLI.start ARGV

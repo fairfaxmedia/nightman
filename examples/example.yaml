@@ -1,0 +1,5 @@
+---
+downloads:
+  path: /Users/jslee/Downloads
+  clean_after: 604800
+  dry_run: true
