@@ -5,7 +5,7 @@ module Nightman
       @name        = options[:name]
       @path        = options[:path]
       @clean_after = options[:clean_after].to_i
-      @dry_run     = options[:dry_run]
+      @dry_run     = options[:dry_run] == false ? false : true
       @start_time  = Time.now.to_i
       @dry_run     = true unless sane?
     end

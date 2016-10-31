@@ -12,11 +12,12 @@ module Nightman
       end
       @jobs = yaml.keys.map do |job|
         begin
+          y = yaml[job]
           obj = Job.new({
             :name        => job,
-            :path        => yaml[job]['path'],
-            :clean_after => yaml[job]['clean_after'],
-            :dry_run     => yaml[job]['dry_run'] || true
+            :path        => y['path'],
+            :clean_after => y['clean_after'],
+            :dry_run     => ( y.include?('dry_run') && y['dry_run'] == false ) ? false : true
           })
         rescue
           $logger.warn "#{job}: configuration errors found"
