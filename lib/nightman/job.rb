@@ -6,8 +6,8 @@ module Nightman
       @path           = options[:path]
       @clean_after    = options[:clean_after].to_i
       @dry_run        = options[:dry_run] == false ? false : true
-      @positive_match = options[:positive_match] || []
-      @negative_match = options[:negative_match] || []
+      @include_match = options[:include_match] || ['.']
+      @exclude_match = options[:exclude_match] || []
       @start_time     = Time.now.to_i
       @dry_run        = true unless sane?
       setup_match_rules
@@ -46,30 +46,31 @@ module Nightman
     attr_reader :clean_after
     attr_reader :start_time
     attr_reader :dry_run
-    attr_reader :positive_match
-    attr_reader :negative_match
+    attr_reader :include_match
+    attr_reader :exclude_match
 
   private
-    # if any positive match rules, only delete positive matches
-    # if any negative match rules, never delete negative matches
-    # if both, negative matches override positive matches
+    # if any include match rules, only delete include matches
+    # if any exclude match rules, never delete exclude matches
+    # if both, exclude matches override include matches
     def setup_match_rules
-      $logger.debug "positive match rules:"
-      @positive_match.each { |pm| $logger.debug "+ #{pm.to_s}" }
-      $logger.debug "negative match rules:"
-      @negative_match.each { |nm| $logger.debug "+ #{nm.to_s}" }
+      include_match << Regexp.new('.') if @include_match.flatten.size == 0
+      $logger.debug "include match rules:"
+      @include_match.each { |pm| $logger.debug "+ #{pm.to_s}" }
+      $logger.debug "exclude match rules:"
+      @exclude_match.each { |nm| $logger.debug "+ #{nm.to_s}" }
     end
 
     def match_rules(name)
-      positive = @positive_match.any? { |pm| name.match(pm) }
-      negative = @negative_match.any? { |nm| name.match(nm) }
-      decision = no_rules? || ( positive && !negative )
-      $logger.debug "#{name}: no_rules=#{no_rules?}, positive=#{positive}, negative=#{negative}, decision=#{decision}"
+      include = @include_match.any? { |pm| name.match(pm) }
+      exclude = @exclude_match.any? { |nm| name.match(nm) }
+      decision = no_rules? || ( include && !exclude )
+      $logger.debug "#{name}: no_rules=#{no_rules?}, include=#{include}, exclude=#{exclude}, decision=#{decision}"
       decision
     end
 
     def no_rules?
-      @positive_match.size == 0 && @negative_match.size == 0
+      @include_match.size == 0 && @exclude_match.size == 0
     end
 
     def process_one(filename)
