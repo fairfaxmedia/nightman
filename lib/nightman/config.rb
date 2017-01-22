@@ -14,10 +14,12 @@ module Nightman
         begin
           y = yaml[job]
           obj = Job.new({
-            :name        => job,
-            :path        => y['path'],
-            :clean_after => y['clean_after'],
-            :dry_run     => ( y.include?('dry_run') && y['dry_run'] == false ) ? false : true
+            :name           => job,
+            :path           => y['path'],
+            :clean_after    => y['clean_after'],
+            :dry_run        => ( y.include?('dry_run') && y['dry_run'] == false ) ? false : true,
+            :positive_match => [y['positive_match'] || []].flatten.map { |pm| Regexp.new(pm) },
+            :negative_match => [y['negative_match'] || []].flatten.map { |nm| Regexp.new(nm) },
           })
         rescue
           $logger.warn "#{job}: configuration errors found"
