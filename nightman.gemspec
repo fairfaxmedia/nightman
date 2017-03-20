@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{delete things according to configured rules}
   spec.description   = %q{delete things according to configured rules}
   spec.homepage      = "https://github.com/fairfaxmedia/nightman"
-  spec.license       = "MIT"
+  spec.license       = "Apache-2.0"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
